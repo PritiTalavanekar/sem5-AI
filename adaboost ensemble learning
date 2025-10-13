@@ -1,0 +1,45 @@
+# Import Libraries
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import warnings
+warnings.filterwarnings("ignore")
+
+
+df = pd.read_csv("/content/heart_failure_clinical_records_dataset.csv")  
+
+# Split features and target
+X = df.drop('DEATH_EVENT', axis=1)
+y = df['DEATH_EVENT']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42323232)
+
+# Initialize classifiers
+classifiers = {
+    "LogisticRegression": LogisticRegression(),
+    "RandomForestClassifier": RandomForestClassifier(),
+    "SVC": SVC(),
+    "GaussianNB": GaussianNB()
+}
+
+# Train and evaluate classifiers
+for name, clf in classifiers.items():
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    print(f"{name} accuracy: {accuracy_score(y_test, y_pred):.4f}")
+
+# Boosting with SVM
+svc_clf = SVC(probability=True, kernel='linear')
+boost = AdaBoostClassifier(estimator=svc_clf, n_estimators=1, algorithm='SAMME', learning_rate=0.5)
+boost.fit(X_train, y_train)
+
+# Evaluate Boosting
+y_pred_boost = boost.predict(X_test)
+print(f"Boosting with SVM accuracy: {accuracy_score(y_test, y_pred_boost):.4f}")
+print(f"Boosting training score: {boost.score(X_train, y_train):.4f}")
+print(f"Boosting testing score: {boost.score(X_test, y_test):.4f}")
