@@ -1,0 +1,95 @@
+import heapq
+
+def a_star_search(graph, heuristics, start, goal):
+    open_list = [(heuristics[start], 0, start, [])]  
+    visited = set()
+
+    while open_list:
+        f, g, current, path = heapq.heappop(open_list)
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+        path = path + [current]
+
+        if current == goal:
+            return path, g
+
+        for neighbor, cost in graph[current].items():
+            if neighbor not in visited:
+                total_cost = g + cost
+                heapq.heappush(open_list, (total_cost + heuristics[neighbor], total_cost, neighbor, path))
+
+    return None, float('inf')
+
+
+graph = {
+    'Mumbai': {'Pune': 6, 'Nashik': 4},
+    'Pune': {'Mumbai': 6, 'Solapur': 7, 'Satara': 3},
+    'Nashik': {'Mumbai': 4, 'Aurangabad': 5},
+    'Aurangabad': {'Nashik': 5, 'Solapur': 10},
+    'Solapur': {'Pune': 7, 'Aurangabad': 10, 'Latur': 8},
+    'Satara': {'Pune': 3, 'Kolhapur': 6},
+    'Kolhapur': {'Satara': 6, 'Latur': 12},
+    'Latur': {'Kolhapur': 12, 'Solapur': 8}
+}
+
+
+heuristics = {
+    'Mumbai': 10,
+    'Pune': 8,
+    'Nashik': 9,
+    'Aurangabad': 6,
+    'Solapur': 0,
+    'Satara': 7,
+    'Kolhapur': 5,
+    'Latur': 4  
+}
+
+path, cost = a_star_search(graph, heuristics, 'Pune', 'Latur')
+print("A* Path:", path)
+print("A* Cost:", cost)
+
+
+
+
+
+
+
+
+
+<<<<   >>>>>
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'C': 2, 'D': 3},
+    'C': {'E': 5},
+    'D': {'F': 2, 'G': 4},
+    'E': {'G': 3},
+    'F': {'G': 1},
+    'G': {}
+}
+
+heuristics = {
+    'A': 5,
+    'B': 6,
+    'C': 4,
+    'D': 3,
+    'E': 3,
+    'F': 1,
+    'G': 0
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
