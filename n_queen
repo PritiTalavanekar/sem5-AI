@@ -1,0 +1,22 @@
+from itertools import permutations
+n = int(input("Enter value of N (e.g. 4): "))
+cols = range(n)
+count = 0
+for perm in permutations(cols):
+    valid = True
+    for i in range(n):
+        for j in range(i):
+            if abs(perm[i] - perm[j]) == abs(i - j):
+                valid = False
+                break
+        if not valid:
+            break
+    if valid:
+        board = [["."] * n for _ in range(n)]
+        for row in range(n):
+            board[row][perm[row]] = "Q"
+        for row in board:
+            print(" ".join(row))
+        print()
+        count += 1
+print("Total solutions:", count)
