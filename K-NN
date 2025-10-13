@@ -1,0 +1,160 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+
+# In[5]:
+
+
+#Load the Dataset
+from sklearn.datasets import load_iris
+iris = load_iris()
+
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+df
+df['target']
+
+
+# In[6]:
+
+
+#Split the Data into Training and Test Sets
+X_train, X_test, y_train, y_test = train_test_split(df[iris.feature_names], df['target'], random_state=0)
+X_train, X_test, y_train, y_test 
+
+
+# In[9]:
+
+
+from sklearn.preprocessing import StandardScaler
+scalar=StandardScaler()
+scalar.fit(X_train)
+X_train=scalar.transform(X_train)
+X_test=scalar.transform(X_test)
+
+
+from sklearn.neighbors import KNeighborsClassifier
+classifier=KNeighborsClassifier(n_neighbors=5)
+classifier.fit(X_train,y_train)
+
+y_pred=classifier.predict(X_test)
+y_pred
+
+
+# In[12]:
+
+
+from sklearn.metrics import classification_report,confusion_matrix
+print(classification_report(y_test,y_pred))
+print(confusion_matrix(y_test,y_pred))
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<<<>>>>>>>>>
+
+
+import numpy as np
+from collections import Counter
+
+X_train = np.array([
+    [150, 0],   # Apple
+    [170, 0],   # Apple
+    [160, 0],   # Apple
+    [155, 0],   # Apple
+    [145, 0],   # Apple
+    [140, 1],   # Orange
+    [130, 1],   # Orange
+    [135, 1],   # Orange
+    [125, 1],   # Orange
+    [145, 1],   # Orange
+    [120, 1],   # Lemon
+    [110, 1],   # Lemon
+    [115, 1],   # Lemon
+    [125, 1],   # Lemon
+    [130, 1],   # Lemon
+    [180, 0],   # Apple
+    [175, 0],   # Apple
+    [115, 1],   # Lemon
+    [140, 0],   # Apple (maybe a smooth green apple)
+    [150, 1]    # Orange (maybe a rough orange)
+])
+
+# Corresponding labels:
+# 0 = Apple, 1 = Orange, 2 = Lemon
+y_train = np.array([
+    0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2,
+    0, 0, 2, 0, 1
+])
+# New fruit to classify
+X_test = np.array([[160, 0]])  # New fruit: weight=160g, smooth texture
+
+def euclidean_distance(x1, x2):
+    distance = np.sqrt(np.sum((x1 - x2) ** 2))
+    print(f"Distance between {x1} and {x2} is {distance:.4f}")
+    return distance
+
+def knn_predict(X_train, y_train, X_test, k=3):
+    predictions = []
+    for test_point in X_test:
+        print(f"\nPredicting for test point: {test_point}")
+
+        # Calculate all distances from test_point to training points
+        distances = []
+        for x in X_train:
+            dist = euclidean_distance(test_point, x)
+            distances.append(dist)
+
+        print(f"All distances: {distances}")
+
+        # Get indices of k nearest neighbors
+        k_indices = np.argsort(distances)[:k]
+        print(f"Indices of {k} nearest neighbors: {k_indices}")
+
+        # Get labels of k nearest neighbors
+        k_nearest_labels = [y_train[i] for i in k_indices]
+        print(f"Labels of nearest neighbors: {k_nearest_labels}")
+
+        # Majority vote to decide prediction
+        most_common = Counter(k_nearest_labels).most_common(1)
+        prediction = most_common[0][0]
+        print(f"Most common label among neighbors: {prediction}")
+
+        predictions.append(prediction)
+    return predictions
+
+# Predict the new fruit's class
+predicted_label = knn_predict(X_train, y_train, X_test, k=3)[0]
+
+fruit_names = {0: "Apple", 1: "Orange", 2: "Lemon"}
+print(f"\nThe new fruit is predicted to be: {fruit_names[predicted_label]}")
+
+
+
+
+
+
+
