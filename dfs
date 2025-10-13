@@ -1,0 +1,37 @@
+graph = {
+    'pinguli': {'kudal': 6, 'vengurla': 6},
+    'kudal': {'sawantwadi': 3, 'kankavli': 2, 'pinguli': 6},
+    'vengurla': {'shiroda': 5, 'pinguli': 6},
+    'kankavli': {'kudal': 3},
+    'sawantwadi': {'shiroda': 3, 'kudal': 3},
+    'shiroda': {'sawantwadi': 6, 'vengurla': 5}
+}
+
+visited = set()
+def dfs(graph, node):
+    if node not in visited:
+        print(node, end=" -> ")
+        visited.add(node)
+        for n in graph[node]:
+            if n not in visited:
+                dfs(graph, n)
+
+def dfs_shortest(graph, start, goal, visited=set(), cost=0, path=[]):
+    visited.add(start)
+    path = path + [start]
+    if start == goal: return (path, cost)
+    shortest, min_cost = None, float('inf')
+    for n, w in graph[start].items():
+        if n not in visited:
+            new_path, new_cost = dfs_shortest(graph, n, goal, visited.copy(), cost + w, path)
+            if new_path and new_cost < min_cost:
+                shortest, min_cost = new_path, new_cost
+    return (shortest, min_cost)
+
+print("DFS Traversal Route:")
+dfs(graph, 'vengurla')
+print("\n")
+
+p, c = dfs_shortest(graph, 'vengurla', 'sawantwadi')
+print("Shortest Path:", " -> ".join(p))
+print("Total Distance:", c)
