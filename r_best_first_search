@@ -1,0 +1,57 @@
+def rbfs(graph, heuristics, node, goal, path, g, f_limit):
+    path = path + [node]
+    if node == goal:
+        return path, g
+
+    successors = []
+    for n, cost in graph[node].items():
+        if n not in path:
+            f = max(g + cost + heuristics[n], g + heuristics[node])
+            successors.append([f, n, g + cost])
+
+    if not successors:
+        return None, float('inf')
+
+    successors.sort(key=lambda x: x[0])
+
+    while successors:
+        f, n, g_new = successors[0]
+        if f > f_limit:
+            return None, f
+
+        alt = successors[1][0] if len(successors) > 1 else float('inf')
+        result, best_f = rbfs(graph, heuristics, n, goal, path, g_new, min(f_limit, alt))
+
+        successors[0][0] = best_f
+        successors.sort(key=lambda x: x[0])
+
+        if result:
+            return result, best_f
+
+    return None, float('inf')
+
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'C': 2, 'D': 3},
+    'C': {'E': 5},
+    'D': {'F': 2, 'G': 3},
+    'E': {'G': 3},
+    'F': {'G': 1}
+}
+
+heuristics = {
+    'A': 5,
+    'B': 6,
+    'C': 4,
+    'D': 3,
+    'E': 3,
+    'F': 1,
+    'G': 0
+}
+
+
+path, cost = rbfs(graph, heuristics, 'A', 'G', [], 0, float('inf'))
+print("RBFS path:", path)
+print("Total cost:", cost)
+
